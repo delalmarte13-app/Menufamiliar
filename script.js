@@ -3,18 +3,24 @@ const message = document.querySelector('#form-message');
 const menuSection = document.querySelector('#menu-section');
 const menuOutput = document.querySelector('#menu-output');
 const menuSummary = document.querySelector('#menu-summary');
+const shoppingSection = document.querySelector('#shopping-section');
+const shoppingOutput = document.querySelector('#shopping-output');
+const batchOutput = document.querySelector('#batch-output');
+const addOnInput = document.querySelector('#add-on-input');
+const addOnButton = document.querySelector('#add-on-button');
 
 const recipes = [
-  { name: 'Tacos de pescado y pico de gallo', cuisines: ['fusion', 'mediterranea'], protein: 'pescado', calories: 'estandar' },
-  { name: 'Lentejas con verduras', cuisines: ['espanola', 'mediterranea'], protein: 'verduras', calories: 'ligero' },
-  { name: 'Pollo al ajillo con arroz', cuisines: ['espanola'], protein: 'carne', calories: 'estandar' },
-  { name: 'Salmón con verduras al horno', cuisines: ['mediterranea'], protein: 'pescado', calories: 'ligero' },
-  { name: 'Enfrijoladas de pollo', cuisines: ['fusion'], protein: 'carne', calories: 'mixto' },
-  { name: 'Curry japonés de tofu', cuisines: ['japonesa'], protein: 'verduras', calories: 'mixto' },
-  { name: 'Teriyaki de salmón y brócoli', cuisines: ['japonesa'], protein: 'pescado', calories: 'estandar' },
-  { name: 'Bowl mediterráneo de garbanzos', cuisines: ['mediterranea'], protein: 'verduras', calories: 'ligero' }
+  { name: 'Tacos de pescado y pico de gallo', cuisines: ['fusion', 'mediterranea'], protein: 'pescado', calories: 'estandar', ingredients: [['pescado blanco', '1 kg'], ['tortillas de maíz', '24'], ['tomate', '6'], ['limón', '6']] },
+  { name: 'Lentejas con verduras', cuisines: ['espanola', 'mediterranea'], protein: 'verduras', calories: 'ligero', ingredients: [['lentejas', '500 g'], ['zanahoria', '4'], ['calabacín', '2'], ['cebolla', '2']] },
+  { name: 'Pollo al ajillo con arroz', cuisines: ['espanola'], protein: 'carne', calories: 'estandar', ingredients: [['pollo', '1 kg'], ['arroz', '500 g'], ['ajo', '2 cabezas'], ['perejil', '1 manojo']] },
+  { name: 'Salmón con verduras al horno', cuisines: ['mediterranea'], protein: 'pescado', calories: 'ligero', ingredients: [['salmón', '1 kg'], ['brócoli', '2 piezas'], ['pimiento', '3'], ['limón', '2']] },
+  { name: 'Enfrijoladas de pollo', cuisines: ['fusion'], protein: 'carne', calories: 'mixto', ingredients: [['pollo', '800 g'], ['frijoles cocidos', '1 kg'], ['tortillas de maíz', '18'], ['queso fresco', '250 g']] },
+  { name: 'Curry japonés de tofu', cuisines: ['japonesa'], protein: 'verduras', calories: 'mixto', ingredients: [['tofu', '600 g'], ['arroz', '500 g'], ['zanahoria', '3'], ['cebolla', '2']] },
+  { name: 'Teriyaki de salmón y brócoli', cuisines: ['japonesa'], protein: 'pescado', calories: 'estandar', ingredients: [['salmón', '800 g'], ['brócoli', '2 piezas'], ['salsa teriyaki', '250 ml'], ['arroz', '400 g']] },
+  { name: 'Bowl mediterráneo de garbanzos', cuisines: ['mediterranea'], protein: 'verduras', calories: 'ligero', ingredients: [['garbanzos cocidos', '800 g'], ['pepino', '3'], ['tomate', '5'], ['feta', '250 g']] }
 ];
 
+const batchBases = [['Sofrito base', 'cebolla, tomate, pimiento y ajo'], ['Caldo de verduras', 'apio, zanahoria, puerro y agua'], ['Frijoles de la olla', 'frijol seco, cebolla y laurel']];
 const dayNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
 
 function scoreRecipe(recipe, preferences) {
@@ -28,7 +34,6 @@ function buildMenu(preferences) {
   const availableDays = Array.from({ length: preferences.duration }, (_, index) => index + 1)
     .filter((day) => !preferences.weekdaysOnly || (day % 7 > 0 && day % 7 < 6));
   const ranked = [...recipes].sort((a, b) => scoreRecipe(b, preferences) - scoreRecipe(a, preferences));
-
   return availableDays.map((day, index) => ({
     day: `Día ${day} · ${dayNames[day % 7]}`,
     meals: [ranked[index % ranked.length], ranked[(index + 3) % ranked.length]]
@@ -38,38 +43,48 @@ function buildMenu(preferences) {
 function renderMenu(menu, preferences) {
   menuSummary.textContent = `${preferences.duration} días · ${menu.length} días planificados${preferences.weekdaysOnly ? ' · sin fines de semana' : ''}`;
   menuOutput.innerHTML = menu.map(({ day, meals }) => `
-    <article class="day-card">
-      <h3>${day}</h3>
-      <ol>
-        <li><span>Comida</span>${meals[0].name}</li>
-        <li><span>Cena</span>${meals[1].name}</li>
-      </ol>
-    </article>
-  `).join('');
+    <article class="day-card"><h3>${day}</h3><ol>
+      <li><span>Comida</span>${meals[0].name}</li><li><span>Cena</span>${meals[1].name}</li>
+    </ol></article>`).join('');
   menuSection.hidden = false;
+  renderShopping(menu);
   menuSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
+
+function consolidateIngredients(menu) {
+  const totals = new Map();
+  menu.flatMap(({ meals }) => meals).forEach((recipe) => recipe.ingredients.forEach(([name, amount]) => {
+    const key = name.toLowerCase();
+    totals.set(key, totals.has(key) ? `${totals.get(key)} + ${amount}` : amount);
+  }));
+  return totals;
+}
+
+function renderShopping(menu) {
+  batchOutput.innerHTML = `<h3>Bases de batch cooking</h3><ul>${batchBases.map(([name, ingredients]) => `<li><strong>${name}:</strong> ${ingredients}</li>`).join('')}</ul>`;
+  shoppingOutput.innerHTML = [...consolidateIngredients(menu)].map(([name, amount]) => `<li><span>${name}</span><strong>${amount}</strong></li>`).join('');
+  shoppingSection.hidden = false;
+}
+
+addOnButton.addEventListener('click', () => {
+  const item = addOnInput.value.trim();
+  if (!item) return;
+  shoppingOutput.insertAdjacentHTML('beforeend', `<li><span>${item}</span><strong>Libre</strong></li>`);
+  addOnInput.value = '';
+  addOnInput.focus();
+});
 
 form.addEventListener('submit', (event) => {
   event.preventDefault();
   const data = new FormData(form);
   const cuisines = data.getAll('cuisine');
-
   if (!cuisines.length) {
     message.textContent = 'Selecciona al menos un estilo de cocina.';
     form.querySelector('input[name="cuisine"]').focus();
     return;
   }
-
-  const preferences = {
-    duration: Number(data.get('duration')),
-    cuisines,
-    protein: data.get('protein'),
-    calories: data.get('calories'),
-    weekdaysOnly: data.get('weekdaysOnly') === 'on'
-  };
-
+  const preferences = { duration: Number(data.get('duration')), cuisines, protein: data.get('protein'), calories: data.get('calories'), weekdaysOnly: data.get('weekdaysOnly') === 'on' };
   sessionStorage.setItem('menuPreferences', JSON.stringify(preferences));
   renderMenu(buildMenu(preferences), preferences);
-  message.textContent = 'Menú generado según tus preferencias.';
+  message.textContent = 'Menú y lista de compra generados según tus preferencias.';
 });
