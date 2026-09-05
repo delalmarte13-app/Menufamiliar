@@ -80,12 +80,16 @@
       <div class="section-heading">
         <p class="step">Compra inteligente</p>
         <h2 id="shopping-title">Lista de la compra</h2>
-        <p class="summary">Cantidades consolidadas para todo el menú, incluyendo preparaciones base.</p>
+        <p class="summary">Cantidades consolidadas para el menú y las preparaciones base. Marca cada artículo mientras haces la compra.</p>
       </div>
       <div id="batch-output" class="batch-list"></div>
-      <ul id="shopping-output" class="shopping-list"></ul>
-      <label class="choice add-on"><input id="add-on-input" type="text" placeholder="Ej.: café, servilletas..."> <span>Añadir artículo libre</span></label>
-      <button id="add-on-button" type="button">Añadir a la lista</button>
+      <ul id="shopping-output" class="shopping-list" aria-label="Artículos de la lista de la compra"></ul>
+      <div class="add-on-row">
+        <label class="sr-only" for="add-on-input">Artículo libre</label>
+        <input id="add-on-input" type="text" placeholder="Ej.: café, servilletas...">
+        <button id="add-on-button" type="button">Añadir artículo</button>
+      </div>
+      <p id="shopping-message" class="form-message" role="status" aria-live="polite"></p>
     </section>
   </main>
 </body>

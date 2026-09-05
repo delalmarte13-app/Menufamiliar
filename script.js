@@ -5,6 +5,7 @@ const menuOutput = document.querySelector('#menu-output');
 const menuSummary = document.querySelector('#menu-summary');
 const shoppingSection = document.querySelector('#shopping-section');
 const shoppingOutput = document.querySelector('#shopping-output');
+const shoppingMessage = document.querySelector('#shopping-message');
 const batchOutput = document.querySelector('#batch-output');
 const addOnInput = document.querySelector('#add-on-input');
 const addOnButton = document.querySelector('#add-on-button');
@@ -70,9 +71,49 @@ function consolidateIngredients(menu) {
   return totals;
 }
 
+function readShoppingItems() {
+  try { return JSON.parse(localStorage.getItem('shoppingItems')) || []; } catch { return []; }
+}
+
+function saveShoppingItems(items) {
+  localStorage.setItem('shoppingItems', JSON.stringify(items));
+}
+
+function renderShoppingItems(items) {
+  shoppingOutput.replaceChildren();
+  items.forEach((item, index) => {
+    const row = document.createElement('li');
+    const label = document.createElement('label');
+    const checkbox = document.createElement('input');
+    const name = document.createElement('span');
+    const amount = document.createElement('strong');
+    checkbox.type = 'checkbox';
+    checkbox.checked = Boolean(item.checked);
+    checkbox.dataset.index = index;
+    name.textContent = item.name;
+    amount.textContent = item.amount;
+    label.append(checkbox, name);
+    row.append(label, amount);
+    row.classList.toggle('is-checked', Boolean(item.checked));
+    if (item.custom) {
+      const remove = document.createElement('button');
+      remove.type = 'button';
+      remove.className = 'remove-item';
+      remove.dataset.removeIndex = index;
+      remove.setAttribute('aria-label', `Eliminar ${item.name}`);
+      remove.textContent = 'Eliminar';
+      row.append(remove);
+    }
+    shoppingOutput.append(row);
+  });
+}
+
 function renderShopping(menu) {
-  batchOutput.innerHTML = `<h3>Bases de batch cooking</h3><ul>${batchBases.map(([name, ingredients]) => `<li><strong>${name}:</strong> ${ingredients}</li>`).join('')}</ul>`;
-  shoppingOutput.innerHTML = [...consolidateIngredients(menu)].map(([name, amount]) => `<li><span>${name}</span><strong>${amount}</strong></li>`).join('');
+  batchOutput.innerHTML = `<h3>Bases de batch cooking</h3><p>Estas bases se preparan una vez y sus ingredientes aparecen diferenciados de los platos del menú.</p><ul>${batchBases.map(([name, ingredients]) => `<li><strong>${name}:</strong> ${ingredients}</li>`).join('')}</ul>`;
+  const customItems = readShoppingItems().filter((item) => item.custom);
+  const items = [...consolidateIngredients(menu)].map(([name, amount]) => ({ name, amount, custom: false, checked: false }));
+  renderShoppingItems([...items, ...customItems]);
+  saveShoppingItems([...items, ...customItems]);
   shoppingSection.hidden = false;
 }
 
@@ -109,13 +150,44 @@ function restorePreferences() {
 
 addOnButton.addEventListener('click', () => {
   const item = addOnInput.value.trim();
-  if (!item) return;
-  const row = document.createElement('li');
-  row.innerHTML = `<span></span><strong>Libre</strong>`;
-  row.firstElementChild.textContent = item;
-  shoppingOutput.append(row);
+  if (!item) {
+    shoppingMessage.textContent = 'Escribe un artículo antes de añadirlo.';
+    addOnInput.focus();
+    return;
+  }
+  const items = readShoppingItems();
+  items.push({ name: item, amount: 'Libre', custom: true, checked: false });
+  saveShoppingItems(items);
+  renderShoppingItems(items);
+  shoppingMessage.textContent = `${item} se ha añadido a la lista.`;
   addOnInput.value = '';
   addOnInput.focus();
+});
+
+addOnInput.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    addOnButton.click();
+  }
+});
+
+shoppingOutput.addEventListener('change', (event) => {
+  if (!event.target.matches('input[type="checkbox"]')) return;
+  const items = readShoppingItems();
+  const index = Number(event.target.dataset.index);
+  if (!items[index]) return;
+  items[index].checked = event.target.checked;
+  saveShoppingItems(items);
+  event.target.closest('li').classList.toggle('is-checked', event.target.checked);
+});
+
+shoppingOutput.addEventListener('click', (event) => {
+  const button = event.target.closest('[data-remove-index]');
+  if (!button) return;
+  const items = readShoppingItems();
+  items.splice(Number(button.dataset.removeIndex), 1);
+  saveShoppingItems(items);
+  renderShoppingItems(items);
 });
 
 form.addEventListener('submit', (event) => {
@@ -142,3 +214,9 @@ form.addEventListener('submit', (event) => {
 });
 
 restorePreferences();
+const savedShoppingItems = readShoppingItems();
+if (savedShoppingItems.length) {
+  batchOutput.innerHTML = `<h3>Bases de batch cooking</h3><p>Estas bases se preparan una vez y sus ingredientes aparecen diferenciados de los platos del menú.</p><ul>${batchBases.map(([name, ingredients]) => `<li><strong>${name}:</strong> ${ingredients}</li>`).join('')}</ul>`;
+  renderShoppingItems(savedShoppingItems);
+  shoppingSection.hidden = false;
+}
