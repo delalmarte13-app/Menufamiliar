@@ -220,3 +220,7 @@ if (savedShoppingItems.length) {
   renderShoppingItems(savedShoppingItems);
   shoppingSection.hidden = false;
 }
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js').catch(() => {}));
+}

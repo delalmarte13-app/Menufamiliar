@@ -1,0 +1,19 @@
+{
+  "name": "Menú Familiar",
+  "short_name": "Menú Familiar",
+  "description": "Planificador familiar de menús y lista de la compra.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fffdf8",
+  "theme_color": "#d65a3a",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
