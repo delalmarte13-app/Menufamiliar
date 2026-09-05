@@ -26,6 +26,7 @@ const batchBases = [
   ['Caldo de verduras', 'apio, zanahoria, puerro y agua'],
   ['Frijoles de la olla', 'frijol seco, cebolla y laurel']
 ];
+const batchProducts = [['cebolla', '6 piezas'], ['tomate', '8 piezas'], ['pimiento', '4 piezas'], ['ajo', '2 cabezas'], ['apio', '1 manojo'], ['zanahoria', '8 piezas'], ['puerro', '2 piezas'], ['agua', '5 litros'], ['frijol seco', '500 g'], ['laurel', '1 paquete']];
 const dayNames = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
 function scoreRecipe(recipe, preferences) {
@@ -112,6 +113,11 @@ function renderShopping(menu) {
   batchOutput.innerHTML = `<h3>Bases de batch cooking</h3><p>Estas bases se preparan una vez y sus ingredientes aparecen diferenciados de los platos del menú.</p><ul>${batchBases.map(([name, ingredients]) => `<li><strong>${name}:</strong> ${ingredients}</li>`).join('')}</ul>`;
   const customItems = readShoppingItems().filter((item) => item.custom);
   const items = [...consolidateIngredients(menu)].map(([name, amount]) => ({ name, amount, custom: false, checked: false }));
+  batchProducts.forEach(([name, amount]) => {
+    const existing = items.find((item) => item.name === name);
+    if (existing) existing.amount += ` + ${amount}`;
+    else items.push({ name, amount, custom: false, checked: false });
+  });
   renderShoppingItems([...items, ...customItems]);
   saveShoppingItems([...items, ...customItems]);
   shoppingSection.hidden = false;
