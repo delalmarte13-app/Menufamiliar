@@ -63,8 +63,17 @@
 
         <label class="choice toggle"><input type="checkbox" id="weekdays-only" name="weekdaysOnly"> <span>Excluir fines de semana</span></label>
         <p id="form-message" class="form-message" role="status" aria-live="polite"></p>
-        <button type="submit">Continuar con mis preferencias</button>
+        <button type="submit">Generar mi menú</button>
       </form>
+    </section>
+
+    <section id="menu-section" class="card menu-section" aria-labelledby="menu-title" hidden>
+      <div class="section-heading">
+        <p class="step">Paso 2 de 2</p>
+        <h2 id="menu-title">Tu menú personalizado</h2>
+        <p id="menu-summary" class="summary"></p>
+      </div>
+      <div id="menu-output" class="menu-list"></div>
     </section>
   </main>
 </body>
