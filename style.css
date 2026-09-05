@@ -1,0 +1,36 @@
+:root {
+  color-scheme: light;
+  --ink: #24322d;
+  --muted: #66736d;
+  --paper: #fffdf8;
+  --surface: #ffffff;
+  --accent: #d65a3a;
+  --accent-dark: #b84428;
+  --line: #dfe7df;
+  --soft: #eef5ed;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; font: 1rem/1.5 system-ui, sans-serif; color: var(--ink); background: var(--paper); }
+.app-shell { width: min(100% - 2rem, 42rem); margin: 0 auto; padding: 2.5rem 0 4rem; }
+.hero { margin-bottom: 1.5rem; }
+.eyebrow, .step { margin: 0 0 .35rem; color: var(--accent-dark); font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+h1, h2 { margin: 0; line-height: 1.15; }
+h1 { font-size: clamp(2rem, 8vw, 3.3rem); }
+h2 { font-size: 1.45rem; }
+.hero p:last-child { max-width: 34rem; margin: .8rem 0 0; color: var(--muted); }
+.card { padding: clamp(1.25rem, 5vw, 2rem); border: 1px solid var(--line); border-radius: 1.25rem; background: var(--surface); box-shadow: 0 1rem 3rem rgb(36 50 45 / 8%); }
+.section-heading { margin-bottom: 1.5rem; }
+.field-group { margin: 0 0 1.25rem; }
+label, legend { display: block; margin-bottom: .45rem; font-weight: 700; }
+legend { padding: 0; }
+legend span { color: var(--muted); font-size: .85rem; font-weight: 400; }
+select { width: 100%; padding: .8rem .9rem; border: 1px solid var(--line); border-radius: .65rem; color: var(--ink); background: var(--paper); font: inherit; }
+select:focus, input:focus-visible, button:focus-visible { outline: 3px solid rgb(214 90 58 / 30%); outline-offset: 2px; }
+.choice-grid { display: grid; gap: .65rem; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); }
+.choice { display: flex; gap: .55rem; align-items: center; margin: 0; padding: .75rem; border: 1px solid var(--line); border-radius: .65rem; background: var(--soft); font-weight: 500; cursor: pointer; }
+.choice input { accent-color: var(--accent); }
+.toggle { margin: .25rem 0 1.25rem; background: transparent; }
+button { width: 100%; padding: .9rem 1rem; border: 0; border-radius: .65rem; color: #fff; background: var(--accent); font: inherit; font-weight: 700; cursor: pointer; }
+button:hover { background: var(--accent-dark); }
+.form-message { min-height: 1.5em; margin: 0 0 .75rem; color: var(--accent-dark); font-size: .9rem; }

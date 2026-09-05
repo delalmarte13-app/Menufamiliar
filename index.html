@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Menú Familiar</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="hero">
+      <p class="eyebrow">Planificación familiar</p>
+      <h1>Diseña tu menú</h1>
+      <p>Cuéntanos tus preferencias y prepararemos una propuesta práctica para tu familia.</p>
+    </header>
+
+    <section class="card" aria-labelledby="quiz-title">
+      <div class="section-heading">
+        <p class="step">Paso 1 de 2</p>
+        <h2 id="quiz-title">Cuestionario inicial</h2>
+      </div>
+      <form id="preferences-form">
+        <div class="field-group">
+          <label for="duration">Duración del menú</label>
+          <select id="duration" name="duration" required>
+            <option value="" selected disabled>Selecciona una duración</option>
+            <option value="7">7 días</option>
+            <option value="14">14 días</option>
+          </select>
+        </div>
+
+        <fieldset class="field-group">
+          <legend>Estilo de cocina <span>(elige uno o varios)</span></legend>
+          <div class="choice-grid">
+            <label class="choice"><input type="checkbox" name="cuisine" value="fusion"> <span>Fusión España-México</span></label>
+            <label class="choice"><input type="checkbox" name="cuisine" value="espanola"> <span>Tradicional española</span></label>
+            <label class="choice"><input type="checkbox" name="cuisine" value="japonesa"> <span>Japonesa</span></label>
+            <label class="choice"><input type="checkbox" name="cuisine" value="mediterranea"> <span>Mediterránea</span></label>
+          </div>
+        </fieldset>
+
+        <div class="field-group">
+          <label for="protein">Enfoque de proteínas</label>
+          <select id="protein" name="protein" required>
+            <option value="" selected disabled>Selecciona un enfoque</option>
+            <option value="pescado">Más pescado</option>
+            <option value="carne">Más carne</option>
+            <option value="equilibrado">Equilibrado</option>
+            <option value="verduras">Más verduras</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label for="calories">Perfil calórico</label>
+          <select id="calories" name="calories" required>
+            <option value="" selected disabled>Selecciona un perfil</option>
+            <option value="estandar">Estándar</option>
+            <option value="ligero">Bajo en calorías / dieta</option>
+            <option value="mixto">Mixto familiar</option>
+          </select>
+        </div>
+
+        <label class="choice toggle"><input type="checkbox" id="weekdays-only" name="weekdaysOnly"> <span>Excluir fines de semana</span></label>
+        <p id="form-message" class="form-message" role="status" aria-live="polite"></p>
+        <button type="submit">Continuar con mis preferencias</button>
+      </form>
+    </section>
+  </main>
+</body>
+</html>
