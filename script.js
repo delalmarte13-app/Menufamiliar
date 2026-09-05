@@ -9,16 +9,18 @@ const shoppingMessage = document.querySelector('#shopping-message');
 const batchOutput = document.querySelector('#batch-output');
 const addOnInput = document.querySelector('#add-on-input');
 const addOnButton = document.querySelector('#add-on-button');
+const recipesSection = document.querySelector('#recipes-section');
+const recipesOutput = document.querySelector('#recipes-output');
 
 const recipes = [
-  { name: 'Tacos de pescado y pico de gallo', cuisines: ['fusion', 'mediterranea'], protein: 'pescado', calories: 'estandar', ingredients: [['pescado blanco', '1 kg'], ['tortillas de maíz', '24'], ['tomate', '6'], ['limón', '6']] },
-  { name: 'Lentejas con verduras', cuisines: ['espanola', 'mediterranea'], protein: 'verduras', calories: 'ligero', ingredients: [['lentejas', '500 g'], ['zanahoria', '4'], ['calabacín', '2'], ['cebolla', '2']] },
-  { name: 'Pollo al ajillo con arroz', cuisines: ['espanola'], protein: 'carne', calories: 'estandar', ingredients: [['pollo', '1 kg'], ['arroz', '500 g'], ['ajo', '2 cabezas'], ['perejil', '1 manojo']] },
-  { name: 'Salmón con verduras al horno', cuisines: ['mediterranea'], protein: 'pescado', calories: 'ligero', ingredients: [['salmón', '1 kg'], ['brócoli', '2 piezas'], ['pimiento', '3'], ['limón', '2']] },
-  { name: 'Enfrijoladas de pollo', cuisines: ['fusion'], protein: 'carne', calories: 'mixto', ingredients: [['pollo', '800 g'], ['frijoles cocidos', '1 kg'], ['tortillas de maíz', '18'], ['queso fresco', '250 g']] },
-  { name: 'Curry japonés de tofu', cuisines: ['japonesa'], protein: 'verduras', calories: 'mixto', ingredients: [['tofu', '600 g'], ['arroz', '500 g'], ['zanahoria', '3'], ['cebolla', '2']] },
-  { name: 'Teriyaki de salmón y brócoli', cuisines: ['japonesa'], protein: 'pescado', calories: 'estandar', ingredients: [['salmón', '800 g'], ['brócoli', '2 piezas'], ['salsa teriyaki', '250 ml'], ['arroz', '400 g']] },
-  { name: 'Bowl mediterráneo de garbanzos', cuisines: ['mediterranea'], protein: 'verduras', calories: 'ligero', ingredients: [['garbanzos cocidos', '800 g'], ['pepino', '3'], ['tomate', '5'], ['feta', '250 g']] }
+  { name: 'Tacos de pescado y pico de gallo', cuisines: ['fusion', 'mediterranea'], protein: 'pescado', calories: 'estandar', ingredients: [['pescado blanco', '1 kg'], ['tortillas de maíz', '24'], ['tomate', '6'], ['limón', '6']], steps: ['Marina el pescado con limón, ajo y sal durante 15 minutos.', 'Cocínalo a la plancha y desmenúzalo.', 'Mezcla tomate, cebolla y limón; sirve en tortillas calientes.'] },
+  { name: 'Lentejas con verduras', cuisines: ['espanola', 'mediterranea'], protein: 'verduras', calories: 'ligero', ingredients: [['lentejas', '500 g'], ['zanahoria', '4'], ['calabacín', '2'], ['cebolla', '2']], steps: ['Sofríe la cebolla y añade zanahoria y calabacín.', 'Agrega lentejas y caldo; cuece 35 minutos.', 'Rectifica de sal y deja reposar antes de servir.'] },
+  { name: 'Pollo al ajillo con arroz', cuisines: ['espanola'], protein: 'carne', calories: 'estandar', ingredients: [['pollo', '1 kg'], ['arroz', '500 g'], ['ajo', '2 cabezas'], ['perejil', '1 manojo']], steps: ['Dora el pollo en trozos con el ajo.', 'Añade agua o caldo y cocina 20 minutos.', 'Prepara el arroz y sirve con perejil fresco.'] },
+  { name: 'Salmón con verduras al horno', cuisines: ['mediterranea'], protein: 'pescado', calories: 'ligero', ingredients: [['salmón', '1 kg'], ['brócoli', '2 piezas'], ['pimiento', '3'], ['limón', '2']], steps: ['Coloca salmón, brócoli y pimiento en una bandeja.', 'Aliña con limón, aceite y pimienta.', 'Hornea a 200 °C durante 18 minutos.'] },
+  { name: 'Enfrijoladas de pollo', cuisines: ['fusion'], protein: 'carne', calories: 'mixto', ingredients: [['pollo', '800 g'], ['frijoles cocidos', '1 kg'], ['tortillas de maíz', '18'], ['queso fresco', '250 g']], steps: ['Tritura los frijoles con caldo y caliéntalos.', 'Rellena las tortillas con pollo deshebrado.', 'Baña con frijol y termina con queso fresco.'] },
+  { name: 'Curry japonés de tofu', cuisines: ['japonesa'], protein: 'verduras', calories: 'mixto', ingredients: [['tofu', '600 g'], ['arroz', '500 g'], ['zanahoria', '3'], ['cebolla', '2']], steps: ['Dora el tofu y reserva.', 'Sofríe cebolla y zanahoria; añade curry y caldo.', 'Incorpora tofu, cocina 10 minutos y sirve con arroz.'] },
+  { name: 'Teriyaki de salmón y brócoli', cuisines: ['japonesa'], protein: 'pescado', calories: 'estandar', ingredients: [['salmón', '800 g'], ['brócoli', '2 piezas'], ['salsa teriyaki', '250 ml'], ['arroz', '400 g']], steps: ['Pinta el salmón con salsa teriyaki.', 'Cocínalo al horno o plancha hasta que esté hecho.', 'Saltea el brócoli y sirve con arroz.'] },
+  { name: 'Bowl mediterráneo de garbanzos', cuisines: ['mediterranea'], protein: 'verduras', calories: 'ligero', ingredients: [['garbanzos cocidos', '800 g'], ['pepino', '3'], ['tomate', '5'], ['feta', '250 g']], steps: ['Escurre y aliña los garbanzos con aceite y limón.', 'Corta pepino y tomate.', 'Monta el bowl y añade feta desmenuzado.'] }
 ];
 
 const batchBases = [
@@ -123,6 +125,12 @@ function renderShopping(menu) {
   shoppingSection.hidden = false;
 }
 
+function renderRecipes(menu) {
+  const selected = [...new Set(menu.flatMap(({ meals }) => meals))];
+  recipesOutput.innerHTML = selected.map((recipe) => `<article class="recipe-card"><h3>${recipe.name}</h3><p class="recipe-meta">Proteína: ${recipe.protein} · Perfil: ${recipe.calories}</p><strong>Ingredientes</strong><ul>${recipe.ingredients.map(([name, amount]) => `<li>${amount} de ${name}</li>`).join('')}</ul><strong>Preparación</strong><ol>${recipe.steps.map((step) => `<li>${step}</li>`).join('')}</ol></article>`).join('');
+  recipesSection.hidden = false;
+}
+
 function setFormMessage(text, isError = true) {
   message.textContent = text;
   message.dataset.state = isError ? 'error' : 'success';
@@ -215,7 +223,9 @@ form.addEventListener('submit', (event) => {
     weekdaysOnly: data.get('weekdaysOnly') === 'on'
   };
   sessionStorage.setItem('menuPreferences', JSON.stringify(preferences));
-  renderMenu(buildMenu(preferences), preferences);
+  const menu = buildMenu(preferences);
+  renderMenu(menu, preferences);
+  renderRecipes(menu);
   setFormMessage('Menú y lista de compra generados según tus preferencias.', false);
 });
 
